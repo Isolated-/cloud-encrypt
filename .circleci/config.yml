@@ -1,17 +1,54 @@
 version: 2.1
 orbs:
   node: circleci/node@1.1.6
+  gcr: circleci/gcp-gcr@0.0.2
+  gcp-gke: circleci/gcp-gke@0.1.0
 jobs:
-  build-and-test:
+
+  checkout-and-test:
     executor:
       name: node/default
     steps:
       - checkout
       - node/with-cache:
-          steps:
-            - run: yarn install
-            - run: yarn test
+        steps:
+          - run: yarn install
+          - run: yarn test
+          - run: yarn build
+        cache-key: package.json
+        use-strict-cache: true
+
+  build-docker:
+    description: Builds source and creates docker image + push to GCR
+    machine: true
+    steps:
+      - checkout
+      - gcr/gcr-auth
+      - gcr/build-image:
+          image: encrypt-service
+          tag: ${DOCKER_TAG}
+
+      - gcr/push-image:
+          image: encrypt-service
+          tag: ${DOCKER_TAG}
+
+  deploy-docker:
+    description: Deploys image from GCR to GKE
+    machine: true
+    steps:
+      - gcp-gke/install
+      - gcp-gke/init
+      - gcp-gke/rollout-image:
+          deployment: circle-ci-cluster
+          container: encrypt-backend
+          image: gcr.io/${GCP_PROJECT}/${DOCKER_IMAGE}:${DOCKER_TAG}
 workflows:
-    build-and-test:
+    test-build-deploy:
       jobs:
-        - build-and-test
+        - checkout-and-test
+        - build-docker:
+            requires:
+              - checkout-and-test
+        - deploy:
+            requires:
+              - build-docker
