@@ -17,7 +17,10 @@ import { CompareModule } from './compare/compare.module';
 
         NODE_PORT: Joi.number().default(DEFAULT_NODE_PORT),
 
-        BCRYPT_HASH_ROUNDS: Joi.number().default(DEFAULT_BCRYPT_HASH_ROUNDS),
+        BCRYPT_HASH_ROUNDS: Joi.number()
+          .default(DEFAULT_BCRYPT_HASH_ROUNDS)
+          .min(1)
+          .max(13),
       }),
     }),
     EncryptModule,
