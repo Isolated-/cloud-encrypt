@@ -6,6 +6,6 @@ import { ConfigModule } from '@nestjs/config';
 @Module({
   imports: [ConfigModule],
   providers: [BcryptService],
-  exports: [ConfigModule],
+  exports: [ConfigModule, BcryptService],
 })
 export class BcryptModule {}

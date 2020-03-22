@@ -3,8 +3,9 @@ import { ConfigModule } from '@nestjs/config';
 import Joi = require('@hapi/joi');
 import { DEFAULT_NODE_PORT, DEFAULT_BCRYPT_HASH_ROUNDS } from './app.constant';
 import { EncryptModule } from './encrypt/encrypt.module';
-import { EncryptionModule } from '@encryption/encryption';
+import { EncryptionModule, BcryptService } from '@encryption/encryption';
 import { EncryptionService } from '@encryption/encryption/encryption.service';
+import { CompareModule } from './compare/compare.module';
 
 @Module({
   imports: [
@@ -21,8 +22,9 @@ import { EncryptionService } from '@encryption/encryption/encryption.service';
     }),
     EncryptModule,
     EncryptionModule,
+    CompareModule,
   ],
-  providers: [EncryptionService],
+  providers: [EncryptionService, BcryptService],
   exports: [ConfigModule, EncryptionModule],
 })
 export class AppModule {}

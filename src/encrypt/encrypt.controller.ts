@@ -1,7 +1,15 @@
-import { Controller, Post, Body, BadRequestException } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Body,
+  BadRequestException,
+  UsePipes,
+} from '@nestjs/common';
 import { EncryptionService } from '@encryption/encryption/encryption.service';
-import { ENCRYPT_ROUTE } from '../app.constant';
+import { ENCRYPT_ROUTE, ERROR_ENCRYPTION_REQUIRED } from '../app.constant';
 import { BcryptService } from '@encryption/encryption';
+import { EncryptDataDto } from '../data/encrypt-data.dto';
+import { ValidationPipe } from '../validation.pipe';
 
 @Controller(ENCRYPT_ROUTE)
 export class EncryptController {
@@ -11,13 +19,8 @@ export class EncryptController {
   ) {}
 
   @Post()
-  async encrypt(@Body() data) {
-    if (data.encryption !== 'bcrypt') {
-      throw new BadRequestException(
-        'encryption type is required to be one of: bcrypt',
-      );
-    }
-
+  @UsePipes(new ValidationPipe())
+  async encrypt(@Body() data: EncryptDataDto) {
     // TODO: clean this up when more encryption methods are implemented
     return {
       success: true,
