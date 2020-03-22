@@ -4,19 +4,23 @@ orbs:
   gcr: circleci/gcp-gcr@0.0.2
   gcp-gke: circleci/gcp-gke@0.1.0
 jobs:
-
   checkout-and-test:
-    executor:
-      name: node/default
+    machine: true
     steps:
       - checkout
+      - node/install
+      - node/install-yarn
       - node/with-cache:
-        steps:
-          - run: yarn install
-          - run: yarn test
-          - run: yarn build
-        cache-key: package.json
-        use-strict-cache: true
+          steps:
+            - run: 
+                name: install dependencies
+                command: yarn install
+            - run: 
+                name: run all unit tests
+                command: yarn test
+            - run:
+                name: build from typescript source
+                command: yarn build
 
   build-docker:
     description: Builds source and creates docker image + push to GCR
@@ -42,13 +46,14 @@ jobs:
           deployment: circle-ci-cluster
           container: encrypt-backend
           image: gcr.io/${GCP_PROJECT}/${DOCKER_IMAGE}:${DOCKER_TAG}
+
 workflows:
-    test-build-deploy:
-      jobs:
-        - checkout-and-test
-        - build-docker:
-            requires:
-              - checkout-and-test
-        - deploy:
-            requires:
-              - build-docker
+  test-build-deploy:
+    jobs:
+      - checkout-and-test
+      - build-docker:
+          requires:
+            - checkout-and-test
+      - deploy-docker:
+          requires:
+            - build-docker
