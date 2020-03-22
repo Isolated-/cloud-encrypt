@@ -1,9 +1,11 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { INestApplication } from '@nestjs/common';
+import { INestApplication, HttpStatus } from '@nestjs/common';
 import * as request from 'supertest';
 import { AppModule } from './../src/app.module';
+import { ENCRYPT_ROUTE } from './../src/app.constant';
+import { BCRYPT_REGEX_EXP } from '@encryption/encryption/bcrypt/bcrypt.constant';
 
-describe('AppController (e2e)', () => {
+describe('EncryptController (e2e)', () => {
   let app: INestApplication;
 
   beforeEach(async () => {
@@ -15,10 +17,20 @@ describe('AppController (e2e)', () => {
     await app.init();
   });
 
-  it('/ (GET)', () => {
+  test(`POST ${ENCRYPT_ROUTE} should return encrypted string`, () => {
+    const data = {
+      encryption: 'bcrypt',
+      string: 'password',
+    };
+
     return request(app.getHttpServer())
-      .get('/')
-      .expect(200)
-      .expect('Hello World!');
+      .post(ENCRYPT_ROUTE)
+      .send(data)
+      .expect(HttpStatus.CREATED)
+      .then(data => {
+        const body = data.body;
+        expect(body.success).toBeTruthy();
+        expect(body.value).toMatch(BCRYPT_REGEX_EXP);
+      });
   });
 });
