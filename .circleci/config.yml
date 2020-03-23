@@ -57,3 +57,10 @@ workflows:
       - deploy-docker:
           requires:
             - build-docker
+          filters:
+            branches:
+              only:
+                - staging
+            tags:
+              only:
+                - /v.*/
