@@ -21,6 +21,14 @@ import { CompareModule } from './compare/compare.module';
           .default(DEFAULT_BCRYPT_HASH_ROUNDS)
           .min(1)
           .max(13),
+
+        RATE_LIMIT_WINDOW_MINS: Joi.number()
+          .default(1)
+          .min(1),
+
+        RATE_LIMIT_WINDOW_MAX: Joi.number()
+          .default(5)
+          .min(1),
       }),
     }),
     EncryptModule,
