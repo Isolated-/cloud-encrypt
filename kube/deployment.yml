@@ -1,0 +1,26 @@
+apiVersion: apps/v1beta2
+kind: Deployment
+metadata:
+  name: encrypt-staging-deployment
+  labels:
+    app: encrypt-backend
+spec:
+  selector: 
+    matchLabels:
+      app: ci-deploy
+      tier: backend
+  replicas: 1
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: ci-deploy
+        tier: backend
+    spec:
+      containers:
+        - image: gcr.io/isocloud/encrypt-service:v0.1.0-dev.1
+          name: encrypt-service
+          ports:
+            - containerPort: 3000
+              name: ci-deploy
