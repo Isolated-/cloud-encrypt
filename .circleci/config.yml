@@ -5,11 +5,12 @@ orbs:
   gcp-gke: circleci/gcp-gke@0.2.0
 jobs:
   checkout-and-test:
+    executor:
+      name: node/default
+      tag: '13'
     machine: true
     steps:
       - checkout
-      - node/install
-      - node/install-yarn
       - node/with-cache:
           steps:
             - run: 
