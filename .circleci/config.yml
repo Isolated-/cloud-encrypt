@@ -41,6 +41,8 @@ jobs:
     machine: true
     steps:
       - gcp-gke/install
+      - gcp-gke/update-kubeconfig-with-credentials:
+          cluster: ${GOOGLE_CLUSTER_ID}
       - gcp-gke/rollout-image:
           deployment: ${GOOGLE_DEPLOYMENT_ID}
           container: ${DOCKER_CONTAINER}
