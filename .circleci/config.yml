@@ -2,7 +2,7 @@ version: 2.1
 orbs:
   node: circleci/node@1.1.6
   gcr: circleci/gcp-gcr@0.6.1
-  gcp-gke: circleci/gcp-gke@1.0.3
+  gcp-gke: circleci/gcp-gke@0.2.0
 jobs:
   checkout-and-test:
     machine: true
@@ -41,8 +41,7 @@ jobs:
     machine: true
     steps:
       - gcp-gke/install
-      - gcp-gke/update-kubeconfig-with-credentials:
-          cluster: ${GOOGLE_CLUSTER_ID}
+      - gcp-gke/init
       - gcp-gke/rollout-image:
           deployment: ${GOOGLE_DEPLOYMENT_ID}
           container: ${DOCKER_CONTAINER}
