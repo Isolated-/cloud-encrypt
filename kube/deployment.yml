@@ -19,7 +19,7 @@ spec:
         tier: backend
     spec:
       containers:
-        - image: gcr.io/isocloud/encrypt-service:v0.1.0-dev.1
+        - image: gcr.io/isocloud/encrypt-service:v0.1.0-dev.2
           name: encrypt-service
           ports:
             - containerPort: 3000
