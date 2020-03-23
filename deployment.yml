@@ -1,0 +1,20 @@
+apiVersion: apps/v1beta2
+kind: Deployment
+metadata:
+  name: encrypt-service-deployment
+spec: 
+  selector:
+    matchLabels:
+      app: encrypt-service-backend
+  replicas: 2
+  template:
+    metadata:
+      labels: 
+        app: encrypt-service-backend
+    spec:
+      containers:
+        - name: encrypt-service-backend
+          image: gcr.io/isocloud/entry-service:v0.1.0-dev.1
+          ports:
+            - containerPort: 3000
+      
